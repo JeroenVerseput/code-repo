@@ -396,11 +396,10 @@
           const m = Math.floor((hosp_time_remaining / 60) % 60);
           const h = Math.floor(hosp_time_remaining / 60 / 60);
           const time_string = `${pad_with_zeros(h)}:${pad_with_zeros(m)}:${pad_with_zeros(s)}`;
-          const foreign_hospital = retreiveForeignHospital(status.description);
-          console.log(foreign_hospital)
+          const foreign_location = retreiveForeignLocation(status.description);
 
           if (status_DIV.getAttribute(CONTENT) != time_string) {
-            status_DIV.setAttribute(CONTENT, `${foreign_hospital}${time_string}`);
+            status_DIV.setAttribute(CONTENT, `${foreign_location}${time_string}`);
           }
 
           if (hosp_time_remaining < 300) {
@@ -474,7 +473,7 @@
     requestAnimationFrame(watch);
   }
 
-  function retreiveForeignHospital(statusDescription){
+  function retreiveForeignLocation(statusDescription){
     const regex = /In a (\w+) hospital for (.+)/;
     const match = statusDescription.match(regex);
 
@@ -494,9 +493,11 @@
         case 'British':
             return 'UK'
         case 'Hawaiian':
-            return 'HW'
+            return 'Hawai'
         case 'Japanese':
             return 'Japan'
+        case 'Chinese':
+            return 'China'
         default:
             return nationality;
     }
