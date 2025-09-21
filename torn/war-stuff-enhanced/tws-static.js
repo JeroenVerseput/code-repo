@@ -350,7 +350,7 @@
       switch (status.state) {
         case "Abroad":
         case "Traveling":
-          console.log(status);
+          //console.log(status);
           if (
             !(
               status_DIV.classList.contains("traveling") ||
