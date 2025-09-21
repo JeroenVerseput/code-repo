@@ -33,6 +33,7 @@
   const CONTENT = "data-twse-content";
   const TRAVELING = "data-twse-traveling";
   const HIGHLIGHT = "data-twse-highlight";
+  let IS_TORN_PDA = false;
 
   try {
     GM_registerMenuCommand("Set Api Key", function () {
@@ -317,6 +318,8 @@
     member_lis.forEach((li, id) => {
       const state = member_status.get(id);
       const status_DIV = li.querySelector("DIV.status");
+      const attack_DIV = li.querySelector("DIV.attack");
+
       if (!status_DIV) {
         return;
       }
@@ -407,6 +410,35 @@
             status_DIV.setAttribute(HIGHLIGHT, "true");
           } else {
             status_DIV.setAttribute(HIGHLIGHT, "false");
+          }
+
+          if (IS_TORN_PDA) {
+            // // Schedule a notification 5 minutes before getting out of hospital
+            // if (hosp_time_remaining > 300 && hosp_time_remaining < 310) {
+            const notify_time = (hosp_time_remaining - 300) * 1000 + Date.now();
+            var click$ = $('<a>Timer</a>');
+            click$.on("click", function () {
+              // if (window.flutter_inappwebview) {
+              //   window.flutter_inappwebview.callHandler("scheduleNotification", {
+              //     title: 'Hospital Timer',                // [required]
+              //     subtitle: '5 minutes remaining',
+              //     id: parseInt(id),                          // [required] Beware of existing notification ID (can be checked with another handler)
+              //     timestamp: Date.now() + 5000,              // [required] UNIX timestamp in ms. Example: notification in 1 minute
+              //     overwriteID: true,                         // Overwrite existing notification ID if true (default: false)
+              //     launchNativeToast: true,                    // Shows a toast confirmation (default: true)
+              //     toastMessage: 'Notification scheduled!',    // (default: if empty a custom message will show with date + time)
+              //     toastColor: 'blue',                         // (default: 'blue', but also accepts 'red' and 'green')
+              //     toastDurationSeconds: 4,                     // Duration of the toast on screen (default: 3). The user can click to close.
+              //     urlCallback: `https://www.torn.com/profiles.php?ID=${id}` // (default: empty)
+              //   });
+              // }
+              console.log(
+                `[TornWarStuffEnhanced] Scheduling notification for ${1} at ${new Date(
+                  notify_time,
+                )}`,
+              );
+            });
+            attack_DIV.append(click$);
           }
           break;
 
@@ -530,6 +562,37 @@
     }
   }
 
+  function checkTornPDA(){
+    if(window.flutter_inappwebview){
+      console.log("flutter_inappwebview is already defined");
+      window.flutter_inappwebview
+        .callHandler("isTornPDA")
+        .then((response) => {
+          if (response.isTornPDA) {
+            console.log("Running in Torn PDA");
+            IS_TORN_PDA = true;
+            // window.flutter_inappwebview.callHandler('scheduleNotification', {
+            //   title: 'Notification title',                // [required]
+            //   subtitle: 'Optional subtitle',
+            //   id: 9995,                                    // [required] Beware of existing notification ID (can be checked with another handler)
+            //   timestamp: Date.now() + 60000,              // [required] UNIX timestamp in ms. Example: notification in 1 minute
+            //   overwriteID: false,                         // Overwrite existing notification ID if true (default: false)
+            //   launchNativeToast: true,                    // Shows a toast confirmation (default: true)
+            //   toastMessage: 'Notification scheduled!',    // (default: if empty a custom message will show with date + time)
+            //   toastColor: 'blue',                         // (default: 'blue', but also accepts 'red' and 'green')
+            //   toastDurationSeconds: 4,                     // Duration of the toast on screen (default: 3). The user can click to close.
+            //   urlCallback: 'https://www.torn.com/gym.php' // (default: empty)
+            // });
+          } else {
+            console.log("Not running in Torn PDA");
+          }
+        })
+        .catch((error) => {
+          console.error("Error checking Torn PDA:", error);
+        });
+    }
+  }
+
   function settimeout_update_statuses() {
     update_statuses();
     setTimeout(() => {
@@ -547,31 +610,6 @@
 
   window.dispatchEvent(new Event("FFScouterV2DisableWarMonitor"));
 
-  if(window.flutter_inappwebview){
-    console.log("flutter_inappwebview is already defined");
-    window.flutter_inappwebview
-      .callHandler("isTornPDA")
-      .then((response) => {
-        if (response.isTornPDA) {
-          console.log("Running in Torn PDA");
-          window.flutter_inappwebview.callHandler('scheduleNotification', {
-            title: 'Notification title',                // [required]
-            subtitle: 'Optional subtitle',
-            id: 9995,                                    // [required] Beware of existing notification ID (can be checked with another handler)
-            timestamp: Date.now() + 60000,              // [required] UNIX timestamp in ms. Example: notification in 1 minute
-            overwriteID: false,                         // Overwrite existing notification ID if true (default: false)
-            launchNativeToast: true,                    // Shows a toast confirmation (default: true)
-            toastMessage: 'Notification scheduled!',    // (default: if empty a custom message will show with date + time)
-            toastColor: 'blue',                         // (default: 'blue', but also accepts 'red' and 'green')
-            toastDurationSeconds: 4,                     // Duration of the toast on screen (default: 3). The user can click to close.
-            urlCallback: 'https://www.torn.com/gym.php' // (default: empty)
-          });
-        } else {
-          console.log("Not running in Torn PDA");
-        }
-      })
-      .catch((error) => {
-        console.error("Error checking Torn PDA:", error);
-      });
-  }
+  checkTornPDA();
+
 })();
