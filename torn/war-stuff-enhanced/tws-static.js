@@ -419,7 +419,7 @@
 
             var click = document.createElement("a");
             click.innerText = "Timer";
-            click.href = "javascript:void(0)";
+            //click.href = "javascript:;";
             click.onclick = function() {
               // if (window.flutter_inappwebview) {
               //   window.flutter_inappwebview.callHandler("scheduleNotification", {
