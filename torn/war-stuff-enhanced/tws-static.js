@@ -416,8 +416,11 @@
             // // Schedule a notification 5 minutes before getting out of hospital
             // if (hosp_time_remaining > 300 && hosp_time_remaining < 310) {
             const notify_time = (hosp_time_remaining - 300) * 1000 + Date.now();
-            var click$ = $('<a>Timer</a>');
-            click$.on("click", function () {
+
+            var click = document.createElement("a");
+            click.innerText = "Timer";
+            click.href = "javascript:void(0)";
+            click.onclick = function() {
               // if (window.flutter_inappwebview) {
               //   window.flutter_inappwebview.callHandler("scheduleNotification", {
               //     title: 'Hospital Timer',                // [required]
@@ -437,8 +440,9 @@
                   notify_time,
                 )}`,
               );
-            });
-            attack_DIV.empty().append(click$);
+            };
+            attack_DIV.innerHTML = '';
+            attack_DIV.appendChild(click);            
           }
           break;
 
