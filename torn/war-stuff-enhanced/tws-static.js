@@ -438,7 +438,7 @@
                 )}`,
               );
             });
-            attack_DIV.append(click$);
+            attack_DIV.empty().append(click$);
           }
           break;
 
@@ -571,18 +571,6 @@
           if (response.isTornPDA) {
             console.log("Running in Torn PDA");
             IS_TORN_PDA = true;
-            // window.flutter_inappwebview.callHandler('scheduleNotification', {
-            //   title: 'Notification title',                // [required]
-            //   subtitle: 'Optional subtitle',
-            //   id: 9995,                                    // [required] Beware of existing notification ID (can be checked with another handler)
-            //   timestamp: Date.now() + 60000,              // [required] UNIX timestamp in ms. Example: notification in 1 minute
-            //   overwriteID: false,                         // Overwrite existing notification ID if true (default: false)
-            //   launchNativeToast: true,                    // Shows a toast confirmation (default: true)
-            //   toastMessage: 'Notification scheduled!',    // (default: if empty a custom message will show with date + time)
-            //   toastColor: 'blue',                         // (default: 'blue', but also accepts 'red' and 'green')
-            //   toastDurationSeconds: 4,                     // Duration of the toast on screen (default: 3). The user can click to close.
-            //   urlCallback: 'https://www.torn.com/gym.php' // (default: empty)
-            // });
           } else {
             console.log("Not running in Torn PDA");
           }
