@@ -547,25 +547,6 @@
 
   window.dispatchEvent(new Event("FFScouterV2DisableWarMonitor"));
 
-  // console.log(("Add flutterInAppWebViewPlatformReady listener"));
-  // window.addEventListener(
-  // "flutterInAppWebViewPlatformReady",
-  //   function (event) {
-  //     window.flutter_inappwebview
-  //       .callHandler("isTornPDA")
-  //       .then((response) => {
-  //         if (response.isTornPDA) {
-  //           console.log("Running in Torn PDA");
-  //         } else {
-  //           console.log("Not running in Torn PDA");
-  //         }
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error checking Torn PDA:", error);
-  //       });
-  //   }
-  // );
-
   if(window.flutter_inappwebview){
     console.log("flutter_inappwebview is already defined");
     window.flutter_inappwebview
@@ -573,6 +554,18 @@
       .then((response) => {
         if (response.isTornPDA) {
           console.log("Running in Torn PDA");
+          window.flutter_inappwebview.callHandler('scheduleNotification', {
+            title: 'Notification title',                // [required]
+            subtitle: 'Optional subtitle',
+            id: 9995,                                    // [required] Beware of existing notification ID (can be checked with another handler)
+            timestamp: Date.now() + 60000,              // [required] UNIX timestamp in ms. Example: notification in 1 minute
+            overwriteID: false,                         // Overwrite existing notification ID if true (default: false)
+            launchNativeToast: true,                    // Shows a toast confirmation (default: true)
+            toastMessage: 'Notification scheduled!',    // (default: if empty a custom message will show with date + time)
+            toastColor: 'blue',                         // (default: 'blue', but also accepts 'red' and 'green')
+            toastDurationSeconds: 4,                     // Duration of the toast on screen (default: 3). The user can click to close.
+            urlCallback: 'https://www.torn.com/gym.php' // (default: empty)
+          });
         } else {
           console.log("Not running in Torn PDA");
         }
