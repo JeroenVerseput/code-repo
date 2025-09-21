@@ -433,12 +433,12 @@
                     toastDurationSeconds: 4,                     // Duration of the toast on screen (default: 3). The user can click to close.
                     urlCallback: `https://www.torn.com/profiles.php?ID=${id}` // (default: empty)
                   });
+                  console.log(
+                    `[TornWarStuffEnhanced] Scheduling notification for ${id} at ${new Date(
+                      notify_time,
+                    )}`,
+                  );
                 }
-                console.log(
-                  `[TornWarStuffEnhanced] Scheduling notification for ${1} at ${new Date(
-                    notify_time,
-                  )}`,
-                );
               };
               attack_DIV.innerHTML = '';
               attack_DIV.appendChild(click);            
