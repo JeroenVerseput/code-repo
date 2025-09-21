@@ -414,7 +414,7 @@
 
           if (IS_TORN_PDA) {
             // // Schedule a notification 5 minutes before getting out of hospital
-            if (hosp_time_remaining > 300 && hosp_time_remaining < 310) {
+            if (hosp_time_remaining > 300) {
               const notify_time = (hosp_time_remaining - 300) * 1000 + Date.now();
 
               var click = document.createElement("a");
