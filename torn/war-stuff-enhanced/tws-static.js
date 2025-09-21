@@ -26,7 +26,7 @@
   document.documentElement.appendChild(ffScouterV2DisableWarMonitor);
 
   let apiKey =
-    localStorage.getItem("xentac-torn_war_stuff_enhanced-apikey") ??
+    localStorage.getItem("static-torn_war_stuff_enhanced-apikey") ??
     "###PDA-APIKEY###";
   const sort_enemies = true;
   let ever_sorted = false;
@@ -56,7 +56,7 @@
       if (userInput !== null && userInput.length == 16) {
         apiKey = userInput;
         localStorage.setItem(
-          "xentac-torn_war_stuff_enhanced-apikey",
+          "static-torn_war_stuff_enhanced-apikey",
           userInput,
         );
       } else {
@@ -347,7 +347,7 @@
             const hosp_time_remaining = getTimeRemaining(1758410195)
             const time_string = createTimeString(hosp_time_remaining)
             //const content = "► " + status.description.split("Traveling to ")[1] + ' ' + time_string;
-            const content = "► " + status.description.split("Traveling to ")[1] + " (" + status.travel_type + ") ";
+            const content = "► " + status.description.split("Traveling to ")[1] + " (" + getFlightType(status) + ") ";
             li.setAttribute("data-location", content);
             status_DIV.setAttribute(CONTENT, content);
           } else if (status.description.includes("In ")) {
@@ -360,7 +360,7 @@
             const hosp_time_remaining = getTimeRemaining(1758410195)
             const time_string = createTimeString(hosp_time_remaining)
             //const content = "◄ " + status.description.split("Returning to Torn from ")[1] + ' ' + time_string;
-            const content = "◄ " + status.description.split("Returning to Torn from ")[1] + " (" + status.travel_type + ") ";
+            const content = "◄ " + status.description.split("Returning to Torn from ")[1] + " (" + getFlightType(status) + ") ";
             li.setAttribute("data-location", content);
             status_DIV.setAttribute(CONTENT, content);
           } else if (status.description.includes("Traveling")) {
@@ -518,6 +518,15 @@
             return 'UAE'
         default:
             return nationality;
+    }
+  }
+
+  function getFlightType(status){
+    switch(status.travel_type){
+        case 'standard':
+            return 'Std/Bus';
+        default:
+            return status.travel_type;
     }
   }
 
