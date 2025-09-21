@@ -568,5 +568,17 @@
 
   if(window.flutter_inappwebview){
     console.log("flutter_inappwebview is already defined");
+    window.flutter_inappwebview
+      .callHandler("isTornPDA")
+      .then((response) => {
+        if (response.isTornPDA) {
+          console.log("Running in Torn PDA");
+        } else {
+          console.log("Not running in Torn PDA");
+        }
+      })
+      .catch((error) => {
+        console.error("Error checking Torn PDA:", error);
+      });
   }
 })();
