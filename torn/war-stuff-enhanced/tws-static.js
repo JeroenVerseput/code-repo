@@ -20,24 +20,6 @@
     return;
   }
 
-  window.addEventListener(
-    "flutterInAppWebViewPlatformReady",
-    function (event) {
-      window.flutter_inappwebview
-        .callHandler("isTornPDA")
-        .then((response) => {
-          if (response.isTornPDA) {
-            console.log("Running in Torn PDA");
-          } else {
-            console.log("Not running in Torn PDA");
-          }
-        })
-        .catch((error) => {
-          console.error("Error checking Torn PDA:", error);
-        });
-    }
-  );
-
   const ffScouterV2DisableWarMonitor = document.createElement("div");
   ffScouterV2DisableWarMonitor.id = "FFScouterV2DisableWarMonitor";
   ffScouterV2DisableWarMonitor.style.display = "none";
@@ -564,4 +546,23 @@
   console.log("[TornWarStuffEnhanced] Initialized");
 
   window.dispatchEvent(new Event("FFScouterV2DisableWarMonitor"));
+
+  console.log(("Add flutterInAppWebViewPlatformReady listener"));
+  window.addEventListener(
+  "flutterInAppWebViewPlatformReady",
+  function (event) {
+    window.flutter_inappwebview
+      .callHandler("isTornPDA")
+      .then((response) => {
+        if (response.isTornPDA) {
+          console.log("Running in Torn PDA");
+        } else {
+          console.log("Not running in Torn PDA");
+        }
+      })
+      .catch((error) => {
+        console.error("Error checking Torn PDA:", error);
+      });
+  }
+);
 })();
