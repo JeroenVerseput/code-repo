@@ -490,7 +490,7 @@
   }
 
   function retreiveForeignLocation(statusDescription){
-    const regex = /In a (\w+) hospital for (.+)/;
+    const regex = /In a[n]* (\w+) hospital for (.+)/;
     const match = statusDescription.match(regex);
 
     if (match) {
@@ -514,6 +514,8 @@
             return 'Japan'
         case 'Chinese':
             return 'China'
+        case 'Emirati':
+            return 'UAE'
         default:
             return nationality;
     }
