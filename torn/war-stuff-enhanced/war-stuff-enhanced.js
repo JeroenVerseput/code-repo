@@ -1,17 +1,15 @@
 // ==UserScript==
-// @name         Torn War Stuff Enhanced
+// @name         TWS Static
 // @namespace    namespace
-// @version      1.7.2
-// @description  Show travel status and hospital time and sort by hospital time on war page. Fork of https://greasyfork.org/en/scripts/448681-torn-war-stuff
-// @author       xentac
+// @version      1.0.0
+// @description  Show travel status and hospital time and sort by hospital time on war page. Fork of https://greasyfork.org/en/scripts/529238-torn-war-stuff-enhanced
+// @author       estensia
 // @license      MIT
 // @match        https://www.torn.com/factions.php*
 // @grant        GM_addStyle
 // @grant        GM_registerMenuCommand
 // @grant        GM_xmlhttpRequest
 // @connect      api.torn.com
-// @downloadURL https://update.greasyfork.org/scripts/529238/Torn%20War%20Stuff%20Enhanced.user.js
-// @updateURL https://update.greasyfork.org/scripts/529238/Torn%20War%20Stuff%20Enhanced.meta.js
 // ==/UserScript==
 
 (async function () {
@@ -78,6 +76,9 @@
   GM_addStyle(`
 .members-list div.status[data-twse-traveling="true"]::after {
   color: #F287FF !important;
+  line-height: normal !important;
+}
+.members-list div.status.left.traveling{
   line-height: normal !important;
 }
 `);
@@ -331,6 +332,7 @@
       switch (status.state) {
         case "Abroad":
         case "Traveling":
+          console.log(status);
           if (
             !(
               status_DIV.classList.contains("traveling") ||
@@ -342,7 +344,10 @@
           }
           if (status.description.includes("Traveling to ")) {
             li.setAttribute("data-sortA", "4");
-            const content = "► " + status.description.split("Traveling to ")[1];
+            const hosp_time_remaining = getTimeRemaining(1758410195)
+            const time_string = createTimeString(hosp_time_remaining)
+            //const content = "► " + status.description.split("Traveling to ")[1] + ' ' + time_string;
+            const content = "► " + status.description.split("Traveling to ")[1] + " (" + status.travel_type + ") ";
             li.setAttribute("data-location", content);
             status_DIV.setAttribute(CONTENT, content);
           } else if (status.description.includes("In ")) {
@@ -352,8 +357,10 @@
             status_DIV.setAttribute(CONTENT, content);
           } else if (status.description.includes("Returning")) {
             li.setAttribute("data-sortA", "2");
-            const content =
-              "◄ " + status.description.split("Returning to Torn from ")[1];
+            const hosp_time_remaining = getTimeRemaining(1758410195)
+            const time_string = createTimeString(hosp_time_remaining)
+            //const content = "◄ " + status.description.split("Returning to Torn from ")[1] + ' ' + time_string;
+            const content = "◄ " + status.description.split("Returning to Torn from ")[1] + " (" + status.travel_type + ") ";
             li.setAttribute("data-location", content);
             status_DIV.setAttribute(CONTENT, content);
           } else if (status.description.includes("Traveling")) {
@@ -383,19 +390,13 @@
             status_DIV.setAttribute(TRAVELING, "false");
           }
 
-          let now = new Date().getTime() / 1000;
-          if (window.getCurrentTimestamp) {
-            now = window.getCurrentTimestamp() / 1000;
-          }
-          const hosp_time_remaining = Math.round(status.until - now);
+          const hosp_time_remaining = getTimeRemaining(status.until)
           if (hosp_time_remaining <= 0) {
             status_DIV.setAttribute(HIGHLIGHT, "false");
             return;
           }
-          const s = Math.floor(hosp_time_remaining % 60);
-          const m = Math.floor((hosp_time_remaining / 60) % 60);
-          const h = Math.floor(hosp_time_remaining / 60 / 60);
-          const time_string = `${pad_with_zeros(h)}:${pad_with_zeros(m)}:${pad_with_zeros(s)}`;
+
+          const time_string = createTimeString(hosp_time_remaining)
           const foreign_location = retreiveForeignLocation(status.description);
 
           if (status_DIV.getAttribute(CONTENT) != time_string) {
@@ -471,6 +472,21 @@
       }
     }
     requestAnimationFrame(watch);
+  }
+
+  function getTimeRemaining(until){
+      let now = new Date().getTime() / 1000;
+      if (window.getCurrentTimestamp) {
+          now = window.getCurrentTimestamp() / 1000;
+      }
+      return Math.round(until - now);
+  }
+
+  function createTimeString(hosp_time_remaining){
+      const s = Math.floor(hosp_time_remaining % 60);
+      const m = Math.floor((hosp_time_remaining / 60) % 60);
+      const h = Math.floor(hosp_time_remaining / 60 / 60);
+      return `${pad_with_zeros(h)}:${pad_with_zeros(m)}:${pad_with_zeros(s)}`;
   }
 
   function retreiveForeignLocation(statusDescription){
