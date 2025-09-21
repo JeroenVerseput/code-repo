@@ -421,17 +421,17 @@
               click.innerText = "Timer";
               click.onclick = function() {
                 if (window.flutter_inappwebview) {
-                  window.flutter_inappwebview.callHandler("scheduleNotification", {
-                    title: 'Hospital Timer',                // [required]
-                    subtitle: '5 minutes remaining',
-                    id: parseInt(id),                          // [required] Beware of existing notification ID (can be checked with another handler)
-                    timestamp: Date.now() + 5000,              // [required] UNIX timestamp in ms. Example: notification in 1 minute
-                    overwriteID: true,                         // Overwrite existing notification ID if true (default: false)
+                  window.flutter_inappwebview.callHandler('scheduleNotification', {
+                    title: 'Notification title',                // [required]
+                    subtitle: 'Optional subtitle',
+                    id: 123,                                    // [required] Beware of existing notification ID (can be checked with another handler)
+                    timestamp: Date.now() + 60000,              // [required] UNIX timestamp in ms. Example: notification in 1 minute
+                    overwriteID: false,                         // Overwrite existing notification ID if true (default: false)
                     launchNativeToast: true,                    // Shows a toast confirmation (default: true)
                     toastMessage: 'Notification scheduled!',    // (default: if empty a custom message will show with date + time)
                     toastColor: 'blue',                         // (default: 'blue', but also accepts 'red' and 'green')
-                    toastDurationSeconds: 4,                     // Duration of the toast on screen (default: 3). The user can click to close.
-                    urlCallback: `https://www.torn.com/profiles.php?ID=${id}` // (default: empty)
+                    toastDurationSeconds: 4,                    // Duration of the toast on screen (default: 3). The user can click to close.
+                    urlCallback: 'https://www.torn.com/gym.php' // (default: empty)
                   });
                   console.log(
                     `[TornWarStuffEnhanced] Scheduling notification for ${id} at ${new Date(
