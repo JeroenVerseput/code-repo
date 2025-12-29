@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TWS Static
 // @namespace    namespace
-// @version      1.0.0
+// @version      1.0.1
 // @description  Show travel status and hospital time and sort by hospital time on war page. Fork of https://greasyfork.org/en/scripts/529238-torn-war-stuff-enhanced
 // @author       estensia
 // @license      MIT
@@ -62,7 +62,7 @@
         );
       } else {
         console.error(
-          "[TornWarStuffEnhanced] User cancelled the Api Key input.",
+          "[TWS Static] User cancelled the Api Key input.",
         );
       }
     }
@@ -179,7 +179,7 @@
       for (const node of mutation.addedNodes) {
         if (node.classList && node.classList.contains("faction-war")) {
           console.log(
-            "[TornWarStuffEnhanced] Observed mutation of .faction-war node",
+            "[TWS Static] Observed mutation of .faction-war node",
           );
           found_war = true;
           extract_all_member_lis();
@@ -190,7 +190,7 @@
 
   setTimeout(() => {
     if (document.querySelector(".faction-war")) {
-      console.log("[TornWarStuffEnhanced] Found .faction-war");
+      console.log("[TWS Static] Found .faction-war");
       found_war = true;
       extract_all_member_lis();
     }
@@ -238,7 +238,7 @@
     )
       .then((r) => r.json())
       .catch((m) => {
-        console.error("[TornWarStuffEnhanced] ", m);
+        console.error("[TWS Static] ", m);
         error = true;
       });
     if (error) {
@@ -246,14 +246,14 @@
     }
     if (status.error) {
       console.log(
-        "[TornWarStuffEnhanced] Received error from torn API ",
+        "[TWS Static] Received error from torn API ",
         status.error,
       );
       if (
         [0, 1, 2, 3, 4, 6, 7, 10, 12, 13, 14, 16, 18, 21].includes(status.error)
       ) {
         console.log(
-          "[TornWarStuffEnhanced] Received a non-recoverable error. Giving up.",
+          "[TWS Static] Received a non-recoverable error. Giving up.",
         );
         running = false;
         return false;
@@ -263,7 +263,7 @@
         // 8: IP block
         // 9: API disabled
         // Try again in 30 + MIN_TIME_SINCE_LAST_REQUEST seconds
-        console.log("[TornWarStuffEnhanced] Retrying in 40 seconds.");
+        console.log("[TWS Static] Retrying in 40 seconds.");
         last_request = new Date() + 30000;
       }
       return false;
@@ -347,9 +347,6 @@
           }
           if (status.description.includes("Traveling to ")) {
             li.setAttribute("data-sortA", "4");
-            const hosp_time_remaining = getTimeRemaining(1758410195)
-            const time_string = createTimeString(hosp_time_remaining)
-            //const content = "► " + status.description.split("Traveling to ")[1] + ' ' + time_string;
             const content = "► " + status.description.split("Traveling to ")[1] + " (" + getFlightType(status) + ") ";
             li.setAttribute("data-location", content);
             status_DIV.setAttribute(CONTENT, content);
@@ -360,9 +357,6 @@
             status_DIV.setAttribute(CONTENT, content);
           } else if (status.description.includes("Returning")) {
             li.setAttribute("data-sortA", "2");
-            const hosp_time_remaining = getTimeRemaining(1758410195)
-            const time_string = createTimeString(hosp_time_remaining)
-            //const content = "◄ " + status.description.split("Returning to Torn from ")[1] + ' ' + time_string;
             const content = "◄ " + status.description.split("Returning to Torn from ")[1] + " (" + getFlightType(status) + ") ";
             li.setAttribute("data-location", content);
             status_DIV.setAttribute(CONTENT, content);
@@ -434,7 +428,7 @@
                     urlCallback: 'https://www.torn.com/gym.php' // (default: empty)
                   });
                   console.log(
-                    `[TornWarStuffEnhanced] Scheduling notification for ${id} at ${new Date(
+                    `[TWS Static] Scheduling notification for ${id} at ${new Date(
                       notify_time,
                     )}`,
                   );
@@ -558,11 +552,13 @@
   }
 
   function getFlightType(status){
-    switch(status.travel_type){
-        case 'standard':
+    switch(status.plane_image_type){
+        case 'airliner':
             return 'Std/Bus';
+        case 'light_aircraft':
+            return 'Airstrip';
         default:
-            return status.travel_type;
+            return status.plane_image_type;
     }
   }
 
@@ -598,10 +594,11 @@
     requestAnimationFrame(watch);
   }, 1000);
 
-  console.log("[TornWarStuffEnhanced] Initialized");
+  console.log("[TWS Static] Initialized");
 
   window.dispatchEvent(new Event("FFScouterV2DisableWarMonitor"));
 
-  checkTornPDA();
+  // WIP Torn PDA support with timer notifications
+  //checkTornPDA();
 
 })();
