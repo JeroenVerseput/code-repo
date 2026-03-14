@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Racing
 // @namespace    namespace
-// @version      1.0.0
+// @version      1.0.1
 // @description  Vroooeeeem
 // @author       estensia
 // @license      MIT
