@@ -119,7 +119,6 @@
 			"div.cont-black.bottom-round.enlist > div.enlisted-btn-wrap",
 		);
 		var trackname = trackNode?.innerText?.replace(" - Official race", "");
-		trackname = "Mudpit";
 
 		return trackList[trackname];
 	}
