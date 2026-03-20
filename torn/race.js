@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Racing
 // @namespace    namespace
-// @version      1.0.1
+// @version      1.0.2
 // @description  Vroooeeeem
 // @author       estensia
 // @license      MIT
@@ -25,82 +25,114 @@
 		Uptown: {
 			name: "Uptown",
 			car: "Lambrini Torobravo",
-			combination: "T-LR-T3",
+			trackType: "T",
+			trackRange: "LR",
+			turboType: "T3",
 		},
 		Withdrawal: {
 			name: "Withdrawal",
 			car: "Veloria LFA",
-			combination: "T-LR-T3",
+			trackType: "T",
+			trackRange: "LR",
+			turboType: "T3",
 		},
 		Underdog: {
 			name: "Underdog",
 			car: "Edomondo NSX",
-			combination: "T-SR-T2",
+			trackType: "T",
+			trackRange: "SR",
+			turboType: "T2",
 		},
 		Parkland: {
 			name: "Parkland",
 			car: "Edomondo NSX",
-			combination: "D-SR-T3",
+			trackType: "D",
+			trackRange: "SR",
+			turboType: "T3",
 		},
 		Docks: {
 			name: "Docks",
 			car: "Volt GT",
-			combination: "T-LR-T3",
+			trackType: "T",
+			trackRange: "LR",
+			turboType: "T3",
 		},
 		Commerce: {
 			name: "Commerce",
 			car: "Edomondo NSX",
-			combination: "T-SR-T2",
+			trackType: "T",
+			trackRange: "SR",
+			turboType: "T2",
 		},
 		"Two Islands": {
 			name: "Two Islands",
 			car: "Edomondo NSX",
-			combination: "D-LR-T3",
+			trackType: "D",
+			trackRange: "LR",
+			turboType: "T3",
 		},
 		Industrial: {
 			name: "Industrial",
 			car: "Edomondo NSX",
-			combination: "T-SR-T3",
+			trackType: "T",
+			trackRange: "SR",
+			turboType: "T3",
 		},
 		Vector: {
 			name: "Vector",
 			car: "Edomondo NSX",
-			combination: "T-SR-T3",
+			trackType: "T",
+			trackRange: "SR",
+			turboType: "T3",
 		},
 		Mudpit: {
 			name: "Mudpit",
 			car: "Colina Tanprice",
-			combination: "D-LR-T3",
+			trackType: "D",
+			trackRange: "LR",
+			turboType: "T3",
 		},
 		Hammerhead: {
 			name: "Hammerhead",
 			car: "Edomondo NSX",
-			combination: "D-SR-T2",
+			trackType: "D",
+			trackRange: "SR",
+			turboType: "T2",
 		},
 		Sewage: {
 			name: "Sewage",
 			car: "Edomondo NSX",
-			combination: "T-SR-T2",
+			trackType: "T",
+			trackRange: "SR",
+			turboType: "T2",
 		},
 		Meltdown: {
 			name: "Meltdown",
 			car: "Edomondo NSX",
-			combination: "T-SR-T3",
+			trackType: "T",
+			trackRange: "SR",
+			turboType: "T3",
 		},
 		Speedway: {
 			name: "Speedway",
 			car: "Veloria LFA",
-			combination: "T-LR-T3",
+			trackType: "T",
+			trackRange: "LR",
+			turboType: "T3",
 		},
 		"Stone Park": {
 			name: "Stone Park",
 			car: "Echo R8",
-			combination: "D-SR-T3",
+			trackType: "D",
+			trackRange: "SR",
+			turboType: "T3",
 		},
 		Convict: {
 			name: "Convict",
 			car: "Mercia SLR",
-			combination: "T-LR-T3",
+			trackType: "T",
+			trackRange: "LR",
+			turboType: "T3",
 		},
 	};
 
@@ -134,15 +166,33 @@
 				"span[class^='model-car-name-']",
 			);
 
-			cars.push({
-				node: carNode,
-				modelName: modelNode.innerText,
-				combination: combinationNode.innerText,
-				trackMatch: 0,
-			});
+			var combinationRegex = /^[T,D]{1}-(LR|SR){1}-(T2|T3){1}$/
+
+			if(combinationRegex.test(combinationNode.innerText)){
+				var combinationParts = combinationNode.innerText.split('-')
+				cars.push({
+					node: carNode,
+					combinationNode: combinationNode,
+					modelName: modelNode.innerText,
+					trackType: combinationParts[0],
+					trackRange: combinationParts[1],
+					turboType: combinationParts[2],
+					trackMatch: {
+						totalMatch: 0,
+						matchTrackType: false,
+						matchTrackRange: false,
+						matchTurboType: false
+					},
+				});
+			}
 		});
 
 		return cars;
+	}
+
+	function getPartHighlight(part, isMatch) {
+		var style = isMatch ? 'background-color:green' : '';
+		return `<span style='${style}'>${part}</span>`
 	}
 
 	function highlightCars() {
@@ -160,27 +210,36 @@
 		// Compare track and cars
 		if (track) {
 			cars.forEach((car) => {
-				if (track.car == car.modelName) {
-					car.trackMatch++;
-				}
-				if (track.combination == car.combination) {
-					car.trackMatch += 2;
-				}
+				car.trackMatch.matchTrackType = track.trackType == car.trackType;
+				car.trackMatch.matchTrackRange = track.trackRange == car.trackRange;
+				car.trackMatch.matchTurboType = track.turboType == car.turboType;
+
+				car.trackMatch.totalMatch =
+					(track.car == car.modelName ? 1 : 0) +
+					(car.trackMatch.matchTrackType ? 1 : 0) +
+					(car.trackMatch.matchTrackRange ? 1 : 0) +
+					(car.trackMatch.matchTurboType ? 1 : 0);
 			});
 		}
 		console.log(cars);
 
-		// Hightlight
+		// Highlight
 		cars.forEach((car) => {
-			if (car.trackMatch == 3) {
+			if (car.trackMatch.totalMatch == 4) {
 				car.node.style.backgroundColor = "green";
 			}
-			if (car.trackMatch == 2) {
+			if (car.trackMatch.totalMatch == 3) {
 				car.node.style.backgroundColor = "yellow";
 			}
-			if (car.trackMatch == 1) {
+			if (car.trackMatch.totalMatch == 2) {
 				car.node.style.backgroundColor = "orange";
 			}
+
+			var trackTypeHighlight = getPartHighlight(car.trackType, car.trackMatch.matchTrackType);
+			var trackRangeHighlight = getPartHighlight(car.trackRange, car.trackMatch.matchTrackRange);
+			var turboTypeHighlight = getPartHighlight(car.turboType, car.trackMatch.matchTurboType)
+
+			car.combinationNode.innerHTML = `${trackTypeHighlight}-${trackRangeHighlight}-${turboTypeHighlight}`;
 		});
 	}
 
