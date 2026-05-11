@@ -336,6 +336,9 @@
         case "Abroad":
         case "Traveling":
           //console.log(status);
+          const fromTornRegex = /(?:Traveling from Torn to )(.*)/;
+          const backToTornRegex = /(?:Traveling from )(.*)(?: to Torn)/;
+          
           if (
             !(
               status_DIV.classList.contains("traveling") ||
@@ -345,9 +348,9 @@
             status_DIV.setAttribute(CONTENT, status_DIV.innerText);
             break;
           }
-          if (status.description.includes("Traveling to ")) {
+          if (fromTornRegex.test(status.description)) {
             li.setAttribute("data-sortA", "4");
-            const content = "► " + status.description.split("Traveling to ")[1] + " (" + getFlightType(status) + ") ";
+            const content = "► " + fromTornRegex.test(status.description)[1] + " (" + getFlightType(status) + ") ";
             li.setAttribute("data-location", content);
             status_DIV.setAttribute(CONTENT, content);
           } else if (status.description.includes("In ")) {
@@ -355,9 +358,9 @@
             const content = status.description.split("In ")[1];
             li.setAttribute("data-location", content);
             status_DIV.setAttribute(CONTENT, content);
-          } else if (status.description.includes("Returning")) {
+          } else if (backToTornRegex.test(status.description)) {
             li.setAttribute("data-sortA", "2");
-            const content = "◄ " + status.description.split("Returning to Torn from ")[1] + " (" + getFlightType(status) + ") ";
+            const content = "◄ " + backToTornRegex.exec(status.description)[1] + " (" + getFlightType(status) + ") ";
             li.setAttribute("data-location", content);
             status_DIV.setAttribute(CONTENT, content);
           } else if (status.description.includes("Traveling")) {
