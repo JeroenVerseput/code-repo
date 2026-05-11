@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TWS Static
 // @namespace    namespace
-// @version      1.0.2
+// @version      1.0.3
 // @description  Show travel status and hospital time and sort by hospital time on war page. Fork of https://greasyfork.org/en/scripts/529238-torn-war-stuff-enhanced
 // @author       estensia
 // @license      MIT
@@ -350,7 +350,7 @@
           }
           if (fromTornRegex.test(status.description)) {
             li.setAttribute("data-sortA", "4");
-            const content = "► " + fromTornRegex.test(status.description)[1] + " (" + getFlightType(status) + ") ";
+            const content = "► " + fromTornRegex.exec(status.description)[1] + " (" + getFlightType(status) + ") ";
             li.setAttribute("data-location", content);
             status_DIV.setAttribute(CONTENT, content);
           } else if (status.description.includes("In ")) {
