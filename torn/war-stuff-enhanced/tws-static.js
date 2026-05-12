@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TWS Static
 // @namespace    namespace
-// @version      1.0.3
+// @version      1.0.3_experimental
 // @description  Show travel status and hospital time and sort by hospital time on war page. Fork of https://greasyfork.org/en/scripts/529238-torn-war-stuff-enhanced
 // @author       estensia
 // @license      MIT
@@ -338,6 +338,7 @@
           //console.log(status);
           const fromTornRegex = /(?:Traveling from Torn to )(.*)/;
           const backToTornRegex = /(?:Traveling from )(.*)(?: to Torn)/;
+          const inCountryRegex = /(?:In )(.*)/;
           
           if (
             !(
@@ -349,22 +350,24 @@
             break;
           }
           if (fromTornRegex.test(status.description)) {
-            li.setAttribute("data-sortA", "4");
-            const content = "► " + fromTornRegex.exec(status.description)[1] + " (" + getFlightType(status) + ") ";
+            const location = fromTornRegex.exec(status.description)[1];
+            li.setAttribute("data-sortA", getsortOrder(location));
+            const content = "► " + location + " (" + getFlightType(status) + ") ";
             li.setAttribute("data-location", content);
             status_DIV.setAttribute(CONTENT, content);
-          } else if (status.description.includes("In ")) {
-            li.setAttribute("data-sortA", "3");
-            const content = status.description.split("In ")[1];
+          } else if (inCountryRegex.test(status.description)) {
+            const location = inCountryRegex.exec(status.description)[1];
+            li.setAttribute("data-sortA", GetSortOrder(location));
+            const content = location + " (In " + getFlightType(status) + ") ";
             li.setAttribute("data-location", content);
             status_DIV.setAttribute(CONTENT, content);
           } else if (backToTornRegex.test(status.description)) {
-            li.setAttribute("data-sortA", "2");
+            li.setAttribute("data-sortA", GetSortOrder('Back to Torn'));
             const content = "◄ " + backToTornRegex.exec(status.description)[1] + " (" + getFlightType(status) + ") ";
             li.setAttribute("data-location", content);
             status_DIV.setAttribute(CONTENT, content);
           } else if (status.description.includes("Traveling")) {
-            li.setAttribute("data-sortA", "5");
+            li.setAttribute("data-sortA", GetSortOrder('Traveling'));
             const content = "Traveling";
             li.setAttribute("data-location", content);
             status_DIV.setAttribute(CONTENT, content);
@@ -383,7 +386,7 @@
             status_DIV.setAttribute(HIGHLIGHT, "false");
             break;
           }
-          li.setAttribute("data-sortA", "1");
+          li.setAttribute("data-sortA", getSortOrder("Hospital/Jail"));
           if (status.description.includes("In a")) {
             status_DIV.setAttribute(TRAVELING, "true");
           } else {
@@ -445,7 +448,7 @@
 
         default:
           status_DIV.setAttribute(CONTENT, status_DIV.innerText);
-          li.setAttribute("data-sortA", "0");
+          li.setAttribute("data-sortA", getSortOrder("Default"));
           status_DIV.setAttribute(TRAVELING, "false");
           status_DIV.setAttribute(HIGHLIGHT, "false");
           break;
@@ -563,6 +566,43 @@
         default:
             return status.plane_image_type;
     }
+  }
+
+  function GetSortOrder(orderFor)
+  {
+      switch(orderFor)
+      {
+          case 'Default':
+              return "0";
+          case 'Hospital/Jail':
+              return "1";
+          case 'Back to Torn':
+              return "2";
+          case 'Mexico':
+              return "3";
+          case 'Cayman Islands':
+              return "4";
+          case 'Canada':
+              return "5";
+          case 'Hawaii':
+              return "6";
+          case 'United Kingdom':
+              return "7";
+          case 'Argentina':
+              return "8";
+          case 'Switzerland':
+              return "9";
+          case 'Japan':
+              return "10";
+          case 'China':
+              return "11";
+          case 'United Arab Emirates':
+              return "12";
+          case 'South Africa':
+              return "13";
+          default:
+              return "999";
+      }
   }
 
   function checkTornPDA(){
