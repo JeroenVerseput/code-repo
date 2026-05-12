@@ -358,7 +358,7 @@
           } else if (inCountryRegex.test(status.description)) {
             const location = inCountryRegex.exec(status.description)[1];
             li.setAttribute("data-sortA", GetSortOrder(location));
-            const content = location + " (In " + getFlightType(status) + ") ";
+            const content = location;
             li.setAttribute("data-location", content);
             status_DIV.setAttribute(CONTENT, content);
           } else if (backToTornRegex.test(status.description)) {
